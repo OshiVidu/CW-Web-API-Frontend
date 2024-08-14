@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sri Lanka Railways Tracking System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+      integrity="sha384-xodZBNTC5n17Xt2nvrS4xCsA26Dqc9OWwjRxduIMgG6zRstweHf26FfKpFGdZOZ4"
+      crossorigin=""
+    />
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>Sri Lanka Railways Tracking System</h1>
+    </header>
+
+    <!-- Navigation Buttons -->
+    <nav>
+        <ul>
+            <li><button id="btn-all-trains" onclick="showSection('all-trains')">View All Trains</button></li>
+            <li><button id="btn-train-details" onclick="showSection('train-details')">Train Details</button></li>
+            <li><button id="btn-track-location" onclick="showSection('track-location')">Track Train Location</button></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- View All Trains Section -->
+        <section id="all-trains" class="content-section active">
+            <h2>All Trains</h2>
+            <div id="train-list">
+                <!-- Train list will be dynamically loaded here -->
+            </div>
+        </section>
+
+        <!-- Train Details Section -->
+        <section id="train-details" class="content-section">
+            <h2>Train Details</h2>
+            <form id="train-details-form">
+                <label for="train-id">Enter Train ID:</label>
+                <input type="text" id="train-id" name="train-id" required>
+                <button type="submit">Get Details</button>
+            </form>
+            <div id="train-details-output">
+                <!-- Train details will be dynamically loaded here -->
+            </div>
+        </section>
+
+        <!-- Track Train Location Section -->
+        <section id="track-location" class="content-section">
+            <h2>Track Train Location</h2>
+            <form id="track-location-form">
+                <label for="track-train-id">Enter Train ID:</label>
+                <input type="text" id="track-train-id" name="track-train-id" required>
+                <button type="submit">Track Location</button>
+            </form>
+            <div id="location-output">
+                <!-- Train location will be dynamically loaded here -->
+            </div>
+            <div id="map-container">
+                <div id="map"></div> <!-- Map Container -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Sri Lanka Railways. All rights reserved.</p>
+    </footer>
+
+    <!-- Leaflet.js JavaScript -->
+    <script
+      src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+      integrity="sha384-XodZBNTC5n17Xt2nvrS4xCsA26Dqc9OWwjRxduIMgG6zRstweHf26FfKpFGdZOZ4"
+      crossorigin=""
+    ></script>
+    <script src="app.js"></script>
+</body>
+</html>
