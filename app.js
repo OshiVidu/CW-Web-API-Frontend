@@ -2,9 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show the default section
     showSection('all-trains');
 
-    // Handle form submissions for train details and location tracking
+    // Handle form submissions for train details, location tracking, and luggage booking
     document.getElementById('train-details-form').addEventListener('submit', fetchTrainDetails);
+    document.getElementById('user-location-form').addEventListener('submit', fetchArrivalTime);
     document.getElementById('track-location-form').addEventListener('submit', fetchTrainLocation);
+    document.getElementById('luggage-booking-form').addEventListener('submit', bookLuggage);
 
     // Fetch and display all trains
     fetchAllTrains();
@@ -61,6 +63,23 @@ async function fetchTrainDetails(event) {
     }
 }
 
+// Fetch and display estimated arrival time
+async function fetchArrivalTime(event) {
+    event.preventDefault();
+
+    const trainId = document.getElementById('train-id').value;
+    const userLocation = document.getElementById('user-location').value;
+    try {
+        const response = await fetch(`/api/v1/trains/${trainId}/estimate-time?userLocation=${encodeURIComponent(userLocation)}`);
+        const result = await response.json();
+
+        const output = document.getElementById('arrival-time-output');
+        output.innerHTML = result.message;
+    } catch (error) {
+        console.error('Error fetching estimated arrival time:', error);
+    }
+}
+
 // Initialize the map
 const map = L.map('map').setView([7.8731, 80.7718], 7); // Coordinates for Sri Lanka
 
@@ -86,17 +105,51 @@ async function fetchTrainLocation(event) {
 
         locationData.forEach(location => {
             const locationItem = document.createElement('div');
-            locationItem.textContent = `Time: ${location.timestamp}, Lat: ${location.latitude}, Long: ${location.longitude}, Speed: ${location.speed}`;
+            locationItem.textContent = `Lat: ${location.latitude}, Lng: ${location.longitude}, Time: ${location.timestamp}`;
             output.appendChild(locationItem);
-
-            // Update the map with the latest location
-            if (marker) {
-                map.removeLayer(marker); // Remove the old marker
-            }
-            marker = L.marker([location.latitude, location.longitude]).addTo(map);
-            map.setView([location.latitude, location.longitude], 12); // Zoom in to the location
         });
+
+        // Update map
+        const latestLocation = locationData[0]; // Assuming the latest location is the first in the array
+        if (latestLocation) {
+            const { latitude, longitude } = latestLocation;
+            map.setView([latitude, longitude], 13);
+
+            if (marker) {
+                marker.setLatLng([latitude, longitude]);
+            } else {
+                marker = L.marker([latitude, longitude]).addTo(map);
+            }
+        }
     } catch (error) {
         console.error('Error fetching train location:', error);
+    }
+}
+
+// Handle luggage booking
+async function bookLuggage(event) {
+    event.preventDefault();
+
+    const departureStation = document.getElementById('departure-station').value;
+    const destinationStation = document.getElementById('destination-station').value;
+
+    try {
+        const response = await fetch('/api/v1/luggage/book', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                departureStation,
+                destinationStation
+            }),
+        });
+
+        const result = await response.json();
+
+        const output = document.getElementById('luggage-booking-output');
+        output.innerHTML = result.message;
+    } catch (error) {
+        console.error('Error booking luggage:', error);
     }
 }

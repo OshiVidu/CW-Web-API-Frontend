@@ -22,8 +22,9 @@
     <nav>
         <ul>
             <li><button id="btn-all-trains" onclick="showSection('all-trains')">View All Trains</button></li>
-            <li><button id="btn-train-details" onclick="showSection('train-details')">Train Details</button></li>
+            <li><button id="btn-train-details" onclick="showSection('train-details')">Train Details & Arrival Time</button></li>
             <li><button id="btn-track-location" onclick="showSection('track-location')">Track Train Location</button></li>
+            <li><button id="btn-luggage-booking" onclick="showSection('luggage-booking')">Luggage Booking</button></li>
         </ul>
     </nav>
 
@@ -39,7 +40,7 @@
 
         <!-- Train Details Section -->
         <section id="train-details" class="content-section">
-            <h2>Train Details</h2>
+            <h2>Train Details & Estimated Arrival Time</h2>
             <form id="train-details-form">
                 <label for="train-id">Enter Train ID:</label>
                 <input type="text" id="train-id" name="train-id" required>
@@ -47,6 +48,16 @@
             </form>
             <div id="train-details-output">
                 <!-- Train details will be dynamically loaded here -->
+            </div>
+
+            <!-- User Location Input for Estimated Arrival Time -->
+            <form id="user-location-form">
+                <label for="user-location">Enter Your Location:</label>
+                <input type="text" id="user-location" name="user-location" placeholder="e.g., Colombo" required>
+                <button type="submit">Get Estimated Arrival Time</button>
+            </form>
+            <div id="arrival-time-output">
+                <!-- Estimated arrival time will be displayed here -->
             </div>
         </section>
 
@@ -63,6 +74,23 @@
             </div>
             <div id="map-container">
                 <div id="map"></div> <!-- Map Container -->
+            </div>
+        </section>
+
+        <!-- Luggage Booking Section -->
+        <section id="luggage-booking" class="content-section">
+            <h2>Luggage Booking</h2>
+            <form id="luggage-booking-form">
+                <label for="departure-station">Departure Station:</label>
+                <input type="text" id="departure-station" name="departure-station" required>
+                
+                <label for="destination-station">Destination Station:</label>
+                <input type="text" id="destination-station" name="destination-station" required>
+                
+                <button type="submit">Book Luggage</button>
+            </form>
+            <div id="luggage-booking-output">
+                <!-- Booking confirmation will be displayed here -->
             </div>
         </section>
     </main>
