@@ -1,9 +1,11 @@
 // src/components/AllTrains.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Container, Typography, Box, Grid, Card, CardContent, CircularProgress } from '@mui/material';
 
 const AllTrains = () => {
     const [trains, setTrains] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchAllTrains = async () => {
@@ -12,23 +14,49 @@ const AllTrains = () => {
                 setTrains(response.data);
             } catch (error) {
                 console.error('Error fetching all trains:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchAllTrains();
     }, []);
 
+    if (loading) {
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
-        <div>
-            <h2>All Trains</h2>
-            <ul>
+        <Container maxWidth="lg">
+            <Typography variant="h4" align="center" gutterBottom>
+                All Trains
+            </Typography>
+            <Grid container spacing={3}>
                 {trains.map((train) => (
-                    <li key={train.train_id}>
-                        {train.train_name} (ID: {train.train_id}) - Lat: {train.latitude}, Lon: {train.longitude}, Speed: {train.speed} km/h, Signal Strength: {train.signal_strength}%, Last updated: {new Date(train.timestamp).toLocaleString()}
-                    </li>
+                    <Grid item xs={12} sm={6} md={4} key={train.train_id}>
+                        <Card variant="outlined">
+                            <CardContent>
+                                <Typography variant="h6" gutterBottom>
+                                    {train.train_name} (ID: {train.train_id})
+                                </Typography>
+                                <Typography variant="body2">
+                                    <strong>Latitude:</strong> {train.latitude}<br />
+                                    <strong>Longitude:</strong> {train.longitude}<br />
+                                    <strong>Speed:</strong> {train.speed} km/h<br />
+                                    <strong>Signal Strength:</strong> {train.signal_strength}%<br />
+                                    <strong>Last Updated:</strong> {new Date(train.timestamp).toLocaleString()}<br />
+                                    <strong>Location:</strong> {train.locationName}
+                                </Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 ))}
-            </ul>
-        </div>
+            </Grid>
+        </Container>
     );
 };
 

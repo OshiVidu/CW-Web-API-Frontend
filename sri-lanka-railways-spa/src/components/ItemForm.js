@@ -1,17 +1,27 @@
 // src/components/ItemForm.js
 import React, { useState } from 'react';
 import axios from 'axios';
-import ItemMap from './ItemMap';  // Import a new component to display the map
+import ItemMap from './ItemMap';  // Import the map component
+import {
+    Container,
+    Typography,
+    TextField,
+    Button,
+    Box,
+    Alert,
+    Paper
+} from '@mui/material';
 
 const ItemForm = () => {
     const [itemData, setItemData] = useState({
-        name: '',         // Add a name field
+        name: '',
         train_id: '',
         destination: ''
     });
     const [itemId, setItemId] = useState(null);
-    const [enteredItemId, setEnteredItemId] = useState('');  // State to hold the entered item_id
-    const [itemLocation, setItemLocation] = useState(null);  // State to hold the location data
+    const [enteredItemId, setEnteredItemId] = useState('');
+    const [itemLocation, setItemLocation] = useState(null);
+    const [error, setError] = useState('');
 
     const handleChange = (e) => {
         setItemData({
@@ -26,87 +36,118 @@ const ItemForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
             const response = await axios.post('http://localhost:3001/api/v1/items', itemData);
-            setItemId(response.data.data.item_id);  // Extract and set the item_id from the response
+            setItemId(response.data.data.item_id);
         } catch (error) {
             console.error('Error submitting item data:', error);
+            setError('Failed to submit item data. Please try again.');
         }
     };
 
     const handleItemIdSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
             const response = await axios.get(`http://localhost:3001/api/v1/items/${enteredItemId}`);
-            setItemLocation(response.data.trainLocation);  // Extract and set the location data
+            setItemLocation(response.data.trainLocation);
         } catch (error) {
             console.error('Error fetching item location:', error);
+            setError('Failed to fetch item location. Please check the Item ID.');
         }
     };
 
     return (
-        <div>
-            <h2>Enter Item Details</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Name:</label>
-                    <input
-                        type="text"
+        <Container maxWidth="sm">
+            <Paper elevation={3} style={{ padding: '20px', marginTop: '20px' }}>
+                <Typography variant="h5" align="center" gutterBottom>
+                    Enter Item Details
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
+                    <TextField
+                        fullWidth
+                        label="Name"
+                        variant="outlined"
                         name="name"
                         value={itemData.name}
                         onChange={handleChange}
+                        margin="normal"
                         required
                     />
-                </div>
-                <div>
-                    <label>Train ID:</label>
-                    <input
-                        type="text"
+                    <TextField
+                        fullWidth
+                        label="Train ID"
+                        variant="outlined"
                         name="train_id"
                         value={itemData.train_id}
                         onChange={handleChange}
+                        margin="normal"
                         required
                     />
-                </div>
-                <div>
-                    <label>Destination:</label>
-                    <input
-                        type="text"
+                    <TextField
+                        fullWidth
+                        label="Destination"
+                        variant="outlined"
                         name="destination"
                         value={itemData.destination}
                         onChange={handleChange}
+                        margin="normal"
                         required
                     />
-                </div>
-                <button type="submit">Submit</button>
-            </form>
-            {itemId && (
-                <div>
-                    <h3>Your Item ID is: {itemId}</h3>
-                    <p>You can use this ID to track the item's location.</p>
-                </div>
-            )}
+                    <Box mt={2}>
+                        <Button variant="contained" color="primary" fullWidth type="submit">
+                            Submit
+                        </Button>
+                    </Box>
+                </Box>
 
-            {itemId && (
-                <div>
-                    <h2>Track Item Location</h2>
-                    <form onSubmit={handleItemIdSubmit}>
-                        <input
-                            type="text"
-                            placeholder="Enter Item ID"
+                {itemId && (
+                    <Box mt={4}>
+                        <Typography variant="h6" align="center">
+                            Your Item ID is: {itemId}
+                        </Typography>
+                        <Typography align="center">
+                            You can use this ID to track the item's location.
+                        </Typography>
+                    </Box>
+                )}
+
+                {itemId && (
+                    <Box mt={4} component="form" onSubmit={handleItemIdSubmit} noValidate autoComplete="off">
+                        <Typography variant="h6" align="center" gutterBottom>
+                            Track Item Location
+                        </Typography>
+                        <TextField
+                            fullWidth
+                            label="Enter Item ID"
+                            variant="outlined"
                             value={enteredItemId}
                             onChange={handleItemIdChange}
+                            margin="normal"
                             required
                         />
-                        <button type="submit">Track Item</button>
-                    </form>
-                </div>
-            )}
+                        <Box mt={2}>
+                            <Button variant="contained" color="secondary" fullWidth type="submit">
+                                Track Item
+                            </Button>
+                        </Box>
+                    </Box>
+                )}
+
+                {error && (
+                    <Box mt={2}>
+                        <Alert severity="error">{error}</Alert>
+                    </Box>
+                )}
+            </Paper>
 
             {itemLocation && (
-                <ItemMap location={itemLocation} />
+                <Box mt={4}>
+                    <ItemMap location={itemLocation} />
+                </Box>
             )}
-        </div>
+        </Container>
     );
 };
 
